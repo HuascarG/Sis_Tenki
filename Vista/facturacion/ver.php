@@ -181,6 +181,117 @@ $waUrl = !empty($cleanTel)
       background: var(--border, #e2e8f0);
       color: var(--text-primary, #1e293b) !important;
     }
+
+    /* Responsive Mobile Styles */
+    @media (max-width: 768px) {
+      .invoice-actions-bar {
+        margin: 12px 12px 0 12px;
+        padding: 12px;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+      }
+      .invoice-actions-bar > div {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+      .invoice-actions-bar .d-flex {
+        flex-direction: column;
+        width: 100%;
+      }
+      .btn-action-custom {
+        width: 100%;
+        justify-content: center;
+        padding: 10px 14px;
+      }
+      .invoice-wrap {
+        margin: 12px 12px 30px 12px;
+        padding: 24px 18px;
+        border-radius: 12px;
+      }
+      .invoice-header {
+        flex-direction: column;
+        gap: 16px;
+        margin-bottom: 24px;
+      }
+      .invoice-header .d-flex {
+        align-items: flex-start !important;
+      }
+      .company-name {
+        font-size: 24px;
+        letter-spacing: 1px;
+      }
+      .invoice-number {
+        text-align: left;
+        width: 100%;
+        padding-top: 14px;
+        border-top: 1px dashed var(--border);
+      }
+      .invoice-number .num {
+        font-size: 20px;
+      }
+      .invoice-parties {
+        grid-template-columns: 1fr;
+        gap: 18px;
+        margin-bottom: 24px;
+      }
+      .table-responsive-custom {
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        margin-bottom: 16px;
+      }
+      .invoice-table {
+        min-width: 480px;
+        margin-bottom: 0;
+      }
+      .invoice-table thead th {
+        padding: 8px 10px;
+        font-size: 10px;
+        white-space: nowrap;
+      }
+      .invoice-table tbody td {
+        padding: 10px 10px;
+        font-size: 13px;
+      }
+      .invoice-totals {
+        width: 100%;
+        margin-left: 0;
+        margin-top: 16px;
+        border-top: 1px solid var(--border);
+        padding-top: 12px;
+      }
+      .total-row.grand {
+        font-size: 17px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .invoice-actions-bar {
+        margin: 8px 8px 0 8px;
+        padding: 10px;
+      }
+      .invoice-wrap {
+        margin: 8px 8px 24px 8px;
+        padding: 18px 14px;
+      }
+      .company-name {
+        font-size: 20px;
+      }
+      .invoice-table {
+        min-width: 440px;
+      }
+      .invoice-table thead th {
+        padding: 6px 8px;
+        font-size: 9.5px;
+      }
+      .invoice-table tbody td {
+        padding: 8px 8px;
+        font-size: 12px;
+      }
+    }
   </style>
 </head>
 <body>
@@ -251,22 +362,24 @@ $waUrl = !empty($cleanTel)
   </div>
 
   <!-- ITEMS -->
-  <table class="invoice-table">
-    <thead>
-      <tr><th>Código</th><th>Producto</th><th>Cant.</th><th>Precio Unit.</th><th style="text-align:right">Subtotal</th></tr>
-    </thead>
-    <tbody>
-      <?php foreach ($detalle as $d): ?>
-      <tr>
-        <td><?= htmlspecialchars($d['codigo']) ?></td>
-        <td><?= htmlspecialchars($d['producto_nombre']) ?></td>
-        <td><?= $d['cantidad'] ?></td>
-        <td><?= formatMoney((float)$d['precio_unitario']) ?></td>
-        <td style="text-align:right;font-weight:600"><?= formatMoney((float)$d['subtotal']) ?></td>
-      </tr>
-      <?php endforeach; ?>
-    </tbody>
-  </table>
+  <div class="table-responsive-custom">
+    <table class="invoice-table">
+      <thead>
+        <tr><th>Código</th><th>Producto</th><th>Cant.</th><th>Precio Unit.</th><th style="text-align:right">Subtotal</th></tr>
+      </thead>
+      <tbody>
+        <?php foreach ($detalle as $d): ?>
+        <tr>
+          <td><?= htmlspecialchars($d['codigo']) ?></td>
+          <td><?= htmlspecialchars($d['producto_nombre']) ?></td>
+          <td><?= $d['cantidad'] ?></td>
+          <td><?= formatMoney((float)$d['precio_unitario']) ?></td>
+          <td style="text-align:right;font-weight:600"><?= formatMoney((float)$d['subtotal']) ?></td>
+        </tr>
+        <?php endforeach; ?>
+      </tbody>
+    </table>
+  </div>
 
   <!-- TOTALS -->
   <div class="invoice-totals">

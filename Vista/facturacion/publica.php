@@ -69,37 +69,110 @@ $totalBs = ((float)$factura['total']) * $tasaBCV;
     .total-row.grand { border-top:2px solid var(--accent, #f97316); margin-top:8px; padding-top:10px; font-size:19px; font-weight:800; color:var(--accent, #f97316); }
     .invoice-footer { margin-top:40px; text-align:center; font-size:12px; color:#94a3b8; border-top:1px solid #f1f5f9; padding-top:24px; }
 
-    /* Public top bar */
-    .public-actions-bar {
-      max-width: 800px;
-      margin: 24px auto 0 auto;
-      padding: 12px 20px;
-      background: #ffffff;
-      border: 1px solid #e2e8f0;
-      border-radius: 12px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+    /* Responsive Mobile Styles */
+    @media (max-width: 768px) {
+      .public-actions-bar {
+        margin: 12px 12px 0 12px;
+        padding: 12px 14px;
+        flex-direction: column;
+        gap: 12px;
+        align-items: stretch;
+      }
+      .public-actions-bar > div {
+        display: flex;
+        justify-content: center;
+        width: 100%;
+      }
+      .btn-print-custom {
+        width: 100%;
+        justify-content: center;
+        padding: 10px 16px;
+      }
+      .invoice-wrap {
+        margin: 12px 12px 30px 12px;
+        padding: 24px 18px;
+        border-radius: 12px;
+      }
+      .invoice-header {
+        flex-direction: column;
+        gap: 16px;
+        margin-bottom: 24px;
+      }
+      .invoice-header .d-flex {
+        align-items: flex-start !important;
+      }
+      .company-name {
+        font-size: 24px;
+        letter-spacing: 1px;
+      }
+      .invoice-number {
+        text-align: left;
+        width: 100%;
+        padding-top: 14px;
+        border-top: 1px dashed #e2e8f0;
+      }
+      .invoice-number .num {
+        font-size: 20px;
+      }
+      .invoice-parties {
+        grid-template-columns: 1fr;
+        gap: 18px;
+        margin-bottom: 24px;
+      }
+      .table-responsive-custom {
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        margin-bottom: 16px;
+      }
+      .invoice-table {
+        min-width: 480px;
+        margin-bottom: 0;
+      }
+      .invoice-table thead th {
+        padding: 8px 10px;
+        font-size: 10px;
+        white-space: nowrap;
+      }
+      .invoice-table tbody td {
+        padding: 10px 10px;
+        font-size: 13px;
+      }
+      .invoice-totals {
+        width: 100%;
+        margin-left: 0;
+        margin-top: 16px;
+        border-top: 1px solid #f1f5f9;
+        padding-top: 12px;
+      }
+      .total-row.grand {
+        font-size: 17px;
+      }
     }
-    .btn-print-custom {
-      background: linear-gradient(135deg, var(--accent, #f97316) 0%, #ea580c 100%);
-      color: #fff !important;
-      font-weight: 600;
-      font-size: 14px;
-      padding: 8px 18px;
-      border-radius: 8px;
-      border: none;
-      box-shadow: 0 2px 8px rgba(249, 115, 22, 0.35);
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      transition: all 0.2s ease;
-    }
-    .btn-print-custom:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 16px rgba(249, 115, 22, 0.45);
+
+    @media (max-width: 480px) {
+      .public-actions-bar {
+        margin: 8px 8px 0 8px;
+        padding: 10px 12px;
+      }
+      .invoice-wrap {
+        margin: 8px 8px 24px 8px;
+        padding: 18px 14px;
+      }
+      .company-name {
+        font-size: 20px;
+      }
+      .invoice-table {
+        min-width: 440px;
+      }
+      .invoice-table thead th {
+        padding: 6px 8px;
+        font-size: 9.5px;
+      }
+      .invoice-table tbody td {
+        padding: 8px 8px;
+        font-size: 12px;
+      }
     }
   </style>
 </head>
@@ -165,28 +238,30 @@ $totalBs = ((float)$factura['total']) * $tasaBCV;
   </div>
 
   <!-- ITEMS -->
-  <table class="invoice-table">
-    <thead>
-      <tr>
-        <th style="width: 15%">Código</th>
-        <th>Descripción</th>
-        <th style="width: 12%">Cant.</th>
-        <th style="width: 20%">Precio Unit.</th>
-        <th style="width: 20%; text-align:right">Subtotal</th>
-      </tr>
-    </thead>
-    <tbody>
-      <?php foreach ($detalle as $d): ?>
-      <tr>
-        <td class="text-muted font-monospace"><?= !empty($d['codigo']) ? htmlspecialchars($d['codigo']) : '—' ?></td>
-        <td class="fw-semibold text-dark"><?= htmlspecialchars($d['producto_nombre']) ?></td>
-        <td><?= $d['cantidad'] ?></td>
-        <td><?= formatMoney((float)$d['precio_unitario']) ?></td>
-        <td style="text-align:right;font-weight:700"><?= formatMoney((float)$d['subtotal']) ?></td>
-      </tr>
-      <?php endforeach; ?>
-    </tbody>
-  </table>
+  <div class="table-responsive-custom">
+    <table class="invoice-table">
+      <thead>
+        <tr>
+          <th style="width: 15%">Código</th>
+          <th>Descripción</th>
+          <th style="width: 12%">Cant.</th>
+          <th style="width: 20%">Precio Unit.</th>
+          <th style="width: 20%; text-align:right">Subtotal</th>
+        </tr>
+      </thead>
+      <tbody>
+        <?php foreach ($detalle as $d): ?>
+        <tr>
+          <td class="text-muted font-monospace"><?= !empty($d['codigo']) ? htmlspecialchars($d['codigo']) : '—' ?></td>
+          <td class="fw-semibold text-dark"><?= htmlspecialchars($d['producto_nombre']) ?></td>
+          <td><?= $d['cantidad'] ?></td>
+          <td><?= formatMoney((float)$d['precio_unitario']) ?></td>
+          <td style="text-align:right;font-weight:700"><?= formatMoney((float)$d['subtotal']) ?></td>
+        </tr>
+        <?php endforeach; ?>
+      </tbody>
+    </table>
+  </div>
 
   <!-- TOTALS -->
   <div class="invoice-totals">
