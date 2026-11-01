@@ -1,0 +1,18 @@
+# Git ignore para TENKI
+.env
+vendor/
+composer.phar
+composer-setup.php
+*.log
+
+# Carpetas de desarrollo y temporales
+scratch/
+scripts/
+documentacion/
+database/
+Modules/
+
+# Archivos del sistema
+.DS_Store
+Thumbs.db
+

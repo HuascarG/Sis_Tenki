@@ -1,0 +1,37 @@
+# ==============================================================
+# TENKI — Configuración de Seguridad para Servidor Web Apache
+# ==============================================================
+
+# 1. Deshabilitar listado de directorios
+Options -Indexes
+
+# 2. Denegar acceso a archivos sensibles y de configuración
+<FilesMatch "^\.env|\.git|\.sql$|composer\.(json|lock)|package(-lock)?\.json|\.md$">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order deny,allow
+        Deny from all
+    </IfModule>
+</FilesMatch>
+
+# 3. Proteger directorios privados de sistema
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Bloquear acceso directo a Config/
+    RewriteRule ^Config/.*$ - [F,L]
+    
+    # Bloquear acceso directo a scratch/ y scripts/
+    RewriteRule ^(scratch|scripts|database)/.*$ - [F,L]
+</IfModule>
+
+# 4. Cabeceras HTTP de Seguridad
+<IfModule mod_headers.c>
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set X-Frame-Options "DENY"
+    Header always set X-XSS-Protection "1; mode=block"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+    Header unset X-Powered-By
+</IfModule>
