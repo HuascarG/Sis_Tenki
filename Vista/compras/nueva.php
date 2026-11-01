@@ -167,7 +167,8 @@ include ROOT . '/Vista/Includes/header.php';
 <div class="modal fade" id="modalProveedor" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
-      <form id="formAjaxProveedor">
+      <form id="formAjaxProveedor" method="POST">
+        <?= csrfField() ?>
         <div class="modal-header bg-success text-white">
           <h5 class="modal-title"><i class="bi bi-building-add me-2"></i>Nuevo Proveedor Rápido</h5>
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -217,7 +218,8 @@ include ROOT . '/Vista/Includes/header.php';
 <div class="modal fade" id="modalProducto" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-xl">
     <div class="modal-content">
-      <form id="formAjaxProducto">
+      <form id="formAjaxProducto" method="POST">
+        <?= csrfField() ?>
         <div class="modal-header bg-success text-white">
           <h5 class="modal-title"><i class="bi bi-plus-circle me-2"></i>Nuevo Producto Rápido</h5>
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>

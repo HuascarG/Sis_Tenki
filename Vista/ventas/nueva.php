@@ -338,7 +338,8 @@ include ROOT . '/Vista/Includes/header.php';
 <div class="modal fade" id="modalProductoVenta" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-xl">
     <div class="modal-content">
-      <form id="formAjaxProductoVenta">
+      <form id="formAjaxProductoVenta" method="POST">
+        <?= csrfField() ?>
         <div class="modal-header bg-success text-white">
           <h5 class="modal-title"><i class="bi bi-plus-circle me-2"></i>Nuevo Producto Rápido</h5>
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -436,7 +437,8 @@ include ROOT . '/Vista/Includes/header.php';
 <div class="modal fade" id="modalClienteVenta" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
-      <form id="formAjaxClienteVenta">
+      <form id="formAjaxClienteVenta" method="POST">
+        <?= csrfField() ?>
         <div class="modal-header bg-success text-white">
           <h5 class="modal-title"><i class="bi bi-person-plus me-2"></i>Nuevo Cliente Rápido</h5>
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>

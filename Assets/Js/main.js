@@ -45,13 +45,14 @@ function confirmDelete(url, name = 'este registro') {
   });
 }
 
-// Interceptor global para inyectar token CSRF en todos los formularios POST sin token
+// Interceptor global para inyectar token CSRF en todos los formularios y peticiones AJAX (fetch)
 document.addEventListener('DOMContentLoaded', () => {
   const csrfMeta = document.querySelector('meta[name="csrf-token"]');
   if (!csrfMeta) return;
   const token = csrfMeta.getAttribute('content');
 
-  document.querySelectorAll('form[method="POST"], form[method="post"]').forEach(form => {
+  // Inyectar en formularios (incluyendo los modales ajax sin method explícito)
+  document.querySelectorAll('form').forEach(form => {
     if (!form.querySelector('input[name="csrf_token"]')) {
       const input = document.createElement('input');
       input.type = 'hidden';
@@ -60,6 +61,29 @@ document.addEventListener('DOMContentLoaded', () => {
       form.prepend(input);
     }
   });
+
+  // Interceptar window.fetch para inyectar X-CSRF-Token automáticamente en cualquier POST
+  const originalFetch = window.fetch;
+  window.fetch = function(resource, init = {}) {
+    if (init && init.method && init.method.toUpperCase() === 'POST') {
+      init.headers = init.headers || {};
+      if (init.headers instanceof Headers) {
+        if (!init.headers.has('X-CSRF-Token')) {
+          init.headers.append('X-CSRF-Token', token);
+        }
+      } else if (Array.isArray(init.headers)) {
+        init.headers.push(['X-CSRF-Token', token]);
+      } else {
+        init.headers['X-CSRF-Token'] = token;
+      }
+
+      // Si el cuerpo es FormData y no tiene el csrf_token, agregarlo también
+      if (init.body instanceof FormData && !init.body.has('csrf_token')) {
+        init.body.append('csrf_token', token);
+      }
+    }
+    return originalFetch(resource, init);
+  };
 });
 
 // --- Toggle sidebar (mobile) — auto-close offcanvas when a nav link is clicked
