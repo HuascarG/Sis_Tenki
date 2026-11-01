@@ -15,6 +15,7 @@ if (!$user) { setFlash('danger', 'Usuario no encontrado.'); redirect('Vista/usua
 $errors = [];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    validateCsrf();
     $data = [
         'nombre'   => trim($_POST['nombre']   ?? ''),
         'apellido' => trim($_POST['apellido'] ?? ''),

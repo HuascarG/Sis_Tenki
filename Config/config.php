@@ -50,12 +50,16 @@ function redirect(string $url): void {
 
 // Flash messages via session
 function setFlash(string $type, string $message): void {
-    session_start();
+    if (session_status() === PHP_SESSION_NONE) {
+        session_start();
+    }
     $_SESSION['flash'] = ['type' => $type, 'message' => $message];
 }
 
 function getFlash(): ?array {
-    if (session_status() === PHP_SESSION_NONE) session_start();
+    if (session_status() === PHP_SESSION_NONE) {
+        session_start();
+    }
     if (isset($_SESSION['flash'])) {
         $flash = $_SESSION['flash'];
         unset($_SESSION['flash']);

@@ -11,6 +11,7 @@ $ctrl   = new UsuarioController();
 $errors = [];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    validateCsrf();
     $data = [
         'nombre'   => trim($_POST['nombre']   ?? ''),
         'apellido' => trim($_POST['apellido'] ?? ''),
