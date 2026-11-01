@@ -10,8 +10,11 @@ if (!function_exists('env')) {
 
 $appUrl = function_exists('env') ? env('APP_URL') : null;
 if (!$appUrl) {
-    // Detección automática de protocolo y host si no está en el .env
-    $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || ($_SERVER['SERVER_PORT'] ?? 80) == 443) ? "https://" : "http://";
+    // Detección automática de protocolo y host detrás de proxies (Render, Cloudflare, etc.)
+    $isHttps = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
+            || (isset($_SERVER['SERVER_PORT']) && $_SERVER['SERVER_PORT'] == 443)
+            || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https');
+    $protocol = $isHttps ? "https://" : "http://";
     $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
     $appUrl = $protocol . $host . '/';
 }
