@@ -4,6 +4,7 @@ class Database {
     private $pdo;
 
     private $host;
+    private $port;
     private $dbname;
     private $user;
     private $pass;
