@@ -6,13 +6,16 @@ RUN apt-get update && apt-get install -y \
     libjpeg-dev \
     libfreetype6-dev \
     libwebp-dev \
+    libzip-dev \
+    unzip \
+    git \
     mariadb-client \
     curl \
     && rm -rf /var/lib/apt/lists/*
 
-# 2. Configurar y compilar extensiones PHP (GD, PDO MySQL, etc.)
+# 2. Configurar y compilar extensiones PHP (GD, PDO MySQL, Zip, etc.)
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
-    && docker-php-ext-install -j$(nproc) gd pdo pdo_mysql
+    && docker-php-ext-install -j$(nproc) gd pdo pdo_mysql zip
 
 # 3. Habilitar mod_rewrite y mod_headers de Apache para .htaccess
 RUN a2enmod rewrite headers
