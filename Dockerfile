@@ -17,8 +17,15 @@ RUN docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
 # 3. Habilitar mod_rewrite y mod_headers de Apache para .htaccess
 RUN a2enmod rewrite headers
 
-# 4. Copiar los archivos del proyecto al directorio web de Apache
+# 4. Instalar Composer oficial
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+# 5. Copiar los archivos del proyecto al directorio web de Apache
 COPY . /var/www/html/
+
+# 6. Instalar dependencias de PHP (PHPMailer, etc.)
+WORKDIR /var/www/html
+RUN composer install --no-dev --optimize-autoloader --no-interaction
 
 # 5. Ajustar permisos para la carpeta de subidas
 RUN mkdir -p /var/www/html/Assets/uploads/productos \

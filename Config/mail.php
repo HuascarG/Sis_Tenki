@@ -15,9 +15,12 @@ $autoload = dirname(__DIR__) . '/vendor/autoload.php';
 if (file_exists($autoload)) {
     require_once $autoload;
 } else {
-    require_once dirname(__DIR__) . '/vendor/phpmailer/phpmailer/src/Exception.php';
-    require_once dirname(__DIR__) . '/vendor/phpmailer/phpmailer/src/PHPMailer.php';
-    require_once dirname(__DIR__) . '/vendor/phpmailer/phpmailer/src/SMTP.php';
+    $vendorSrc = dirname(__DIR__) . '/vendor/phpmailer/phpmailer/src/';
+    if (file_exists($vendorSrc . 'Exception.php')) {
+        require_once $vendorSrc . 'Exception.php';
+        require_once $vendorSrc . 'PHPMailer.php';
+        require_once $vendorSrc . 'SMTP.php';
+    }
 }
 
 /**
@@ -27,6 +30,9 @@ if (file_exists($autoload)) {
  * @return PHPMailer
  */
 function createMailer(): PHPMailer {
+    if (!class_exists('PHPMailer\PHPMailer\PHPMailer')) {
+        throw new RuntimeException('El componente PHPMailer no está disponible.');
+    }
     $mail = new PHPMailer(true); // true = habilita excepciones
 
     $mail->isSMTP();
