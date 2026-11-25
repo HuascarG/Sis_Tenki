@@ -1,6 +1,7 @@
 <?php
 $nav = [
     ['url' => '',                         'label' => 'Dashboard',   'mod' => 'dashboard',   'icon' => 'bi-speedometer2'],
+    ['url' => 'Vista/caja/index.php',      'label' => 'Caja',        'mod' => 'caja',        'icon' => 'bi-cash-coin'],
     ['url' => 'Vista/inventario/index.php','label' => 'Inventario', 'mod' => 'inventario',  'icon' => 'bi-box-seam'],
     ['url' => 'Vista/ventas/index.php',    'label' => 'Ventas',     'mod' => 'ventas',      'icon' => 'bi-cart3'],
     ['url' => 'Vista/facturacion/index.php','label'=> 'Facturación','mod' => 'facturacion', 'icon' => 'bi-file-earmark-text'],

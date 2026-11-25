@@ -140,10 +140,13 @@ class VentaController {
             $moneda    = in_array($data['moneda'] ?? '', ['USD','BS']) ? $data['moneda'] : 'USD';
             $metodoPago = $esCredito ? 'credito' : ($data['metodo_pago'] ?? 'efectivo_usd');
 
-            $stmt = $pdo->prepare("INSERT INTO ventas (numero_venta, cliente_id, fecha, subtotal, iva, total, estado, moneda, metodo_pago, observaciones)
-                VALUES (?,?,?,?,?,?,?,?,?,?)");
+            $cajaOpen = $pdo->query("SELECT id FROM cajas WHERE estado = 'abierta' ORDER BY id DESC LIMIT 1")->fetchColumn();
+            $cajaId = $cajaOpen ? (int)$cajaOpen : null;
+
+            $stmt = $pdo->prepare("INSERT INTO ventas (numero_venta, cliente_id, caja_id, fecha, subtotal, iva, total, estado, moneda, metodo_pago, observaciones)
+                VALUES (?,?,?,?,?,?,?,?,?,?,?)");
             $stmt->execute([
-                $numero, $data['cliente_id'] ?: null, date('Y-m-d'),
+                $numero, $data['cliente_id'] ?: null, $cajaId, date('Y-m-d'),
                 $subtotal, $iva, $total, $estado, $moneda, $metodoPago, $data['observaciones'] ?? ''
             ]);
             $ventaId = (int)$pdo->lastInsertId();
