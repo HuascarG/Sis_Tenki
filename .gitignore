@@ -4,6 +4,7 @@ vendor/
 composer.phar
 composer-setup.php
 *.log
+*.sql
 
 # Carpetas de desarrollo y temporales
 scratch/

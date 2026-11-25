@@ -139,9 +139,17 @@ class InventarioController {
     public function eliminar(int $id): bool {
         try {
             $pdo  = db();
+            // 1. Intento de borrado físico si no tiene historial
             $stmt = $pdo->prepare("DELETE FROM productos WHERE id = ?");
             return $stmt->execute([$id]);
         } catch (PDOException $e) {
+            // 2. Si falla por clave foránea (el producto tiene ventas o compras vinculadas),
+            // se aplica borrado lógico (desactivar) para preservar la integridad contable
+            if ($e->getCode() == 23000 || (isset($e->errorInfo[1]) && $e->errorInfo[1] == 1451)) {
+                $stmt = db()->prepare("UPDATE productos SET activo = 0 WHERE id = ?");
+                return $stmt->execute([$id]);
+            }
+            error_log('[TENKI Inventario] Error al eliminar producto: ' . $e->getMessage());
             return false;
         }
     }

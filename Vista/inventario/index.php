@@ -11,8 +11,11 @@ $ctrl = new InventarioController();
 if (isset($_GET['delete'])) {
     requireAdmin();
     validateCsrf();
-    $ctrl->eliminar((int)$_GET['delete']);
-    setFlash('success', 'Producto eliminado correctamente.');
+    if ($ctrl->eliminar((int)$_GET['delete'])) {
+        setFlash('success', 'Producto eliminado correctamente.');
+    } else {
+        setFlash('danger', 'No se pudo eliminar el producto.');
+    }
     redirect('Vista/inventario/index.php');
 }
 
