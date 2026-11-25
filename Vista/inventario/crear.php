@@ -146,7 +146,7 @@ include ROOT . '/Vista/Includes/header.php';
           <label class="form-label">Unidad de Medida</label>
           <select name="unidad" class="form-select">
             <?php
-            $unidades = ['unidad','par','juego','litro','mililitro','kilogramo','gramo','metro','rollo','caja','galón'];
+            $unidades = ['unidad','par','juego','kit','litro','mililitro','kilogramo','gramo','metro','rollo','caja','galón'];
             $selUnidad = $_POST['unidad'] ?? 'unidad';
             foreach ($unidades as $u):
             ?>
