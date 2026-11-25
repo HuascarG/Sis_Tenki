@@ -33,6 +33,68 @@ class VentaController {
         return $stmt->fetchAll();
     }
 
+    public function listarPaginado(array $filtros = [], int $page = 1, int $perPage = 15): array {
+        $pdo = db();
+        $where = "WHERE 1=1";
+        $params = [];
+
+        if (!empty($filtros['f_desde'])) {
+            $where .= " AND v.fecha >= ?";
+            $params[] = $filtros['f_desde'];
+        }
+        if (!empty($filtros['f_hasta'])) {
+            $where .= " AND v.fecha <= ?";
+            $params[] = $filtros['f_hasta'];
+        }
+        if (!empty($filtros['estado'])) {
+            $where .= " AND v.estado = ?";
+            $params[] = $filtros['estado'];
+        }
+        if (!empty($filtros['q'])) {
+            $where .= " AND (v.numero_venta LIKE ? OR c.nombre LIKE ?)";
+            $term = "%{$filtros['q']}%";
+            $params[] = $term;
+            $params[] = $term;
+        }
+
+        // Conteo total de ventas con filtros
+        $countSql = "SELECT COUNT(*) FROM ventas v LEFT JOIN clientes c ON v.cliente_id = c.id {$where}";
+        $countStmt = $pdo->prepare($countSql);
+        $countStmt->execute($params);
+        $total = (int)$countStmt->fetchColumn();
+
+        $page = max(1, $page);
+        $totalPages = $total > 0 ? (int)ceil($total / $perPage) : 1;
+        if ($page > $totalPages) $page = $totalPages;
+        $offset = ($page - 1) * $perPage;
+
+        // Registros paginados
+        $sql = "SELECT v.*, c.nombre AS cliente_nombre,
+                       (SELECT GROUP_CONCAT(CONCAT(p.codigo, ' ', p.nombre) SEPARATOR ', ') 
+                        FROM detalle_ventas dv 
+                        JOIN productos p ON dv.producto_id = p.id 
+                        WHERE dv.venta_id = v.id) AS productos_comprados
+                FROM ventas v
+                LEFT JOIN clientes c ON v.cliente_id = c.id
+                {$where}
+                ORDER BY v.created_at DESC
+                LIMIT {$perPage} OFFSET {$offset}";
+
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute($params);
+        $items = $stmt->fetchAll();
+
+        return [
+            'items'       => $items,
+            'total'       => $total,
+            'page'        => $page,
+            'per_page'    => $perPage,
+            'total_pages' => $totalPages,
+            'from'        => $total > 0 ? $offset + 1 : 0,
+            'to'          => min($offset + $perPage, $total)
+        ];
+    }
+
     public function getById(int $id): ?array {
         $pdo  = db();
         $stmt = $pdo->prepare("SELECT v.*, c.nombre AS cliente_nombre, c.documento AS cliente_doc

@@ -19,8 +19,11 @@ if (isset($_GET['delete'])) {
     redirect('Vista/inventario/index.php');
 }
 
-$q         = trim($_GET['q'] ?? '');
-$productos = $q ? $ctrl->buscar($q) : $ctrl->listar();
+$q          = trim($_GET['q'] ?? '');
+$page       = max(1, (int)($_GET['page'] ?? 1));
+$perPage    = 15;
+$paginacion = $ctrl->listarPaginado($q, $page, $perPage);
+$productos  = $paginacion['items'];
 
 // Tasa BCV
 $bcvRate     = getBcvRate();        // float|null
@@ -151,6 +154,53 @@ include ROOT . '/Vista/Includes/header.php';
       </tbody>
     </table>
   </div>
+
+  <!-- PAGINACIÓN -->
+  <?php if ($paginacion['total'] > 0): ?>
+  <div class="card-footer bg-transparent d-flex flex-wrap justify-content-between align-items-center py-3 px-4 border-top gap-2">
+    <div class="text-muted small">
+      Mostrando <span class="fw-semi text-dark"><?= $paginacion['from'] ?></span> a <span class="fw-semi text-dark"><?= $paginacion['to'] ?></span> de <span class="fw-semi text-dark"><?= $paginacion['total'] ?></span> productos
+    </div>
+    <?php if ($paginacion['total_pages'] > 1): ?>
+    <nav aria-label="Paginación de productos">
+      <ul class="pagination pagination-sm mb-0">
+        <!-- Anterior -->
+        <li class="page-item <?= $paginacion['page'] <= 1 ? 'disabled' : '' ?>">
+          <a class="page-link" href="?<?= http_build_query(array_merge($_GET, ['page' => $paginacion['page'] - 1])) ?>" title="Página anterior">
+            <i class="bi bi-chevron-left"></i>
+          </a>
+        </li>
+
+        <?php
+        $startPage = max(1, $paginacion['page'] - 2);
+        $endPage   = min($paginacion['total_pages'], $paginacion['page'] + 2);
+        if ($startPage > 1) {
+            echo '<li class="page-item"><a class="page-link" href="?' . http_build_query(array_merge($_GET, ['page' => 1])) . '">1</a></li>';
+            if ($startPage > 2) echo '<li class="page-item disabled"><span class="page-link">…</span></li>';
+        }
+        for ($i = $startPage; $i <= $endPage; $i++):
+        ?>
+        <li class="page-item <?= $i === $paginacion['page'] ? 'active' : '' ?>">
+          <a class="page-link" href="?<?= http_build_query(array_merge($_GET, ['page' => $i])) ?>"><?= $i ?></a>
+        </li>
+        <?php endfor;
+        if ($endPage < $paginacion['total_pages']) {
+            if ($endPage < $paginacion['total_pages'] - 1) echo '<li class="page-item disabled"><span class="page-link">…</span></li>';
+            echo '<li class="page-item"><a class="page-link" href="?' . http_build_query(array_merge($_GET, ['page' => $paginacion['total_pages']])) . '">' . $paginacion['total_pages'] . '</a></li>';
+        }
+        ?>
+
+        <!-- Siguiente -->
+        <li class="page-item <?= $paginacion['page'] >= $paginacion['total_pages'] ? 'disabled' : '' ?>">
+          <a class="page-link" href="?<?= http_build_query(array_merge($_GET, ['page' => $paginacion['page'] + 1])) ?>" title="Página siguiente">
+            <i class="bi bi-chevron-right"></i>
+          </a>
+        </li>
+      </ul>
+    </nav>
+    <?php endif; ?>
+  </div>
+  <?php endif; ?>
 </div>
 
 <script>

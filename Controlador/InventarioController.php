@@ -51,6 +51,52 @@ class InventarioController {
         return $pdo->query($sql)->fetchAll();
     }
 
+    public function listarPaginado(string $q = '', int $page = 1, int $perPage = 15): array {
+        $pdo = db();
+        $params = [];
+        $where = "WHERE p.activo = 1";
+
+        if (!empty($q)) {
+            $where .= " AND (p.nombre LIKE ? OR p.codigo LIKE ? OR c.nombre LIKE ? OR p.marca LIKE ?)";
+            $term = "%{$q}%";
+            $params = [$term, $term, $term, $term];
+        }
+
+        // Conteo total de registros con el filtro activo
+        $countSql = "SELECT COUNT(*) FROM productos p LEFT JOIN categorias c ON p.categoria_id = c.id {$where}";
+        $countStmt = $pdo->prepare($countSql);
+        $countStmt->execute($params);
+        $total = (int)$countStmt->fetchColumn();
+
+        $page = max(1, $page);
+        $totalPages = $total > 0 ? (int)ceil($total / $perPage) : 1;
+        if ($page > $totalPages) $page = $totalPages;
+        $offset = ($page - 1) * $perPage;
+
+        // Consulta de registros paginados
+        $sql = "SELECT p.*, c.nombre AS categoria, pr.nombre AS proveedor
+                FROM productos p
+                LEFT JOIN categorias c ON p.categoria_id = c.id
+                LEFT JOIN proveedores pr ON p.proveedor_id = pr.id
+                {$where}
+                ORDER BY p.nombre ASC
+                LIMIT {$perPage} OFFSET {$offset}";
+
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute($params);
+        $items = $stmt->fetchAll();
+
+        return [
+            'items'       => $items,
+            'total'       => $total,
+            'page'        => $page,
+            'per_page'    => $perPage,
+            'total_pages' => $totalPages,
+            'from'        => $total > 0 ? $offset + 1 : 0,
+            'to'          => min($offset + $perPage, $total)
+        ];
+    }
+
     public function buscar(string $q): array {
         $pdo = db();
         $sql = "SELECT p.*, c.nombre AS categoria
